@@ -33,6 +33,11 @@ def load_training_set(path):
 
     return np.array(images), np.array(measurements)
 
+def augment_flipped(ts):
+    (X_train, y_train) = ts
+    (X_flipped, y_flipped) = (np.fliplr(X_train), -y_train)
+    return np.concatenate((X_train, X_flipped)), np.concatenate((y_train, y_flipped))
+
 def main(args):
     data_path = args[0]
     X_train, y_train = load_training_set(data_path)

@@ -1,3 +1,7 @@
+
+# Implement LeNet
+# 1816/1816 [==============================] - 6s - loss: 0.0080 - val_loss: 0.0066
+
 import sys
 import loader
 from keras.models import Sequential
