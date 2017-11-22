@@ -33,6 +33,27 @@ def load_training_set(path):
 
     return np.array(images), np.array(measurements)
 
+def load_training_set_all(path):
+    images = []
+    measurements = []
+    for record in load_data(path):
+        steering = record['steering']
+        correction = 0.2
+        
+        images.append(load_image_rgb(record['img_center']))
+        measurements.append(steering)
+
+        # Images from left camera have rightward correction
+        images.append(load_image_rgb(record['img_left']))
+        measurements.append(steering + correction)
+
+        # Images from right camera have leftward correction
+        images.append(load_image_rgb(record['img_right']))
+        measurements.append(steering - correction)
+        
+    return np.array(images), np.array(measurements)
+
+
 def augment_flipped(ts):
     (X_train, y_train) = ts
     (X_flipped, y_flipped) = (np.fliplr(X_train), -y_train)
