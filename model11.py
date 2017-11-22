@@ -43,7 +43,7 @@ def main(args):
     model.fit_generator(tg,
                         samples_per_epoch=len(train_samples) * 2 * 3,
                         validation_data=vg,
-                        nb_val_samples=len(validation_samples) * 2 * 3,
+                        nb_val_samples=len(validation_samples),
                         nb_epoch=3)
     model.save('model11.h5')
 
