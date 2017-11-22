@@ -1,5 +1,5 @@
 
-# Model 8 - More tests with left / right camera augmentation
+# Model 9 - Boost Correction Factor to 0.3
 # Epoch 3/3
 # 18014/18014 [==============================] - 48s - loss: 0.0083 - val_loss: 0.0411
 
@@ -33,11 +33,11 @@ def main(args):
     model = build_model()
 
     data_path = args[0]
-    X_train, y_train = loader.augment_flipped(loader.load_training_sets_all(args, correction=0.2))
+    X_train, y_train = loader.augment_flipped(loader.load_training_sets_all(args, correction=0.3))
     print("%d, %d" % (len(X_train), len(y_train)))
 
     model.fit(X_train, y_train, nb_epoch=3, validation_split=0.2, shuffle=True)
-    model.save('model8.h5')
+    model.save('model9.h5')
 
 
 if __name__=='__main__':
