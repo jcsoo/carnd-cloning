@@ -1,5 +1,7 @@
 
 # Model 6 - NVIDIA Model
+# Epoch 3/3
+# 3632/3632 [==============================] - 8s - loss: 0.0059 - val_loss: 0.0046
 
 import sys
 import loader
