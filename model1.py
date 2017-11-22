@@ -19,10 +19,7 @@ def main(args):
     print("%d, %d" % (len(X_train), len(y_train)))
 
     model.fit(X_train, y_train, nb_epoch=7, validation_split=0.2, shuffle=True)
-    model.save('model.h5')
-
-
-    
+    model.save('model1.h5')
 
 
 if __name__=='__main__':
