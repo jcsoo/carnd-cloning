@@ -25,32 +25,38 @@ def load_image_rgb(path):
     return cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2RGB)
 
 def load_training_set(path):
+    return load_training_sets([path])
+
+def load_training_sets(paths):    
     images = []
     measurements = []
-    for record in load_data(path):
-        images.append(load_image_rgb(record['img_center']))
-        measurements.append(record['steering'])
-
+    for path in paths:
+        for record in load_data(path):
+            images.append(load_image_rgb(record['img_center']))
+            measurements.append(record['steering'])
     return np.array(images), np.array(measurements)
 
-def load_training_set_all(path):
+def load_training_set_all(path, correction=0.2):
+    return load_training_sets_all([path], correction=correction)
+
+def load_training_sets_all(paths, correction=0.2):    
     images = []
     measurements = []
-    for record in load_data(path):
-        steering = record['steering']
-        correction = 0.2
+    for path in paths:
+        for record in load_data(path):
+            steering = record['steering']
         
-        images.append(load_image_rgb(record['img_center']))
-        measurements.append(steering)
+            images.append(load_image_rgb(record['img_center']))
+            measurements.append(steering)
 
-        # Images from left camera have rightward correction
-        images.append(load_image_rgb(record['img_left']))
-        measurements.append(steering + correction)
+            # Images from left camera have rightward correction
+            images.append(load_image_rgb(record['img_left']))
+            measurements.append(steering + correction)
 
-        # Images from right camera have leftward correction
-        images.append(load_image_rgb(record['img_right']))
-        measurements.append(steering - correction)
-        
+            # Images from right camera have leftward correction
+            images.append(load_image_rgb(record['img_right']))
+            measurements.append(steering - correction)
+            
     return np.array(images), np.array(measurements)
 
 
