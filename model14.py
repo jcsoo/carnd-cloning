@@ -44,7 +44,7 @@ def main(args):
                         validation_data=vg,
                         nb_val_samples=len(validation_samples),
                         nb_epoch=3)
-    model.save('model13.h5')
+    model.save('model14.h5')
 
 
 if __name__=='__main__':
