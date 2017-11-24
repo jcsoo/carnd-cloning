@@ -2,7 +2,7 @@ import sys, os, csv
 import cv2
 import numpy as np
 from sklearn.utils import shuffle
-
+from keras.preprocessing.image import ImageDataGenerator
 def load_data(paths, exclude_y=None):
     records = []    
     for path in paths:
@@ -96,6 +96,20 @@ def training_generator(samples, batch_size=32, correction=0.2, scale_y=None, siz
             
             yield augment_flipped((np.array(images), np.array(measurements)))
 
+def training_generator2(samples, batch_size=32, correction=0.2, scale_y=None, size=None, left=False, right=False, cspace=None):
+    images = []
+    measurements = []
+    for record in batch_samples:
+        steering = record['steering']
+        if scale_y:
+            steering *= scale_y            
+        images.append(load_image_rgb(record['img_center'], size=size, cspace=cspace))
+        measurements.append(steering)
+
+    idg = ImageDataGenerator(horizontal_flip=True)
+    
+    return idg.flow(images, measurements)
+            
 def validation_generator(samples, batch_size=32, size=None, scale_y=None, cspace=None):
     num_samples = len(samples)
     while 1:
