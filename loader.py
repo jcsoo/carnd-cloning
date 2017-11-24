@@ -63,7 +63,7 @@ def load_training_sets_all(paths, correction=0.2, size=None):
         measurements.append(steering - correction)
     return np.array(images), np.array(measurements)
 
-def training_generator(samples, batch_size=32, correction=0.2, size=None, left=False, right=False):
+def training_generator(samples, batch_size=32, correction=0.2, scale_y=None, size=None, left=False, right=False):
     num_samples = len(samples)
     while 1:
         shuffle(samples)
@@ -73,6 +73,8 @@ def training_generator(samples, batch_size=32, correction=0.2, size=None, left=F
             measurements = []
             for record in batch_samples:
                 steering = record['steering']
+                if scale_y:
+                    steering *= scale_y
 
                 images.append(load_image_rgb(record['img_center'], size=size))
                 measurements.append(steering)
@@ -89,7 +91,7 @@ def training_generator(samples, batch_size=32, correction=0.2, size=None, left=F
             
             yield augment_flipped((np.array(images), np.array(measurements)))
 
-def validation_generator(samples, batch_size=32, size=None):
+def validation_generator(samples, batch_size=32, size=None, scale_y=None):
     num_samples = len(samples)
     while 1:
         shuffle(samples)
@@ -99,6 +101,8 @@ def validation_generator(samples, batch_size=32, size=None):
             measurements = []
             for record in batch_samples:
                 steering = record['steering']
+                if scale_y:
+                    steering *= scale_y
 
                 images.append(load_image_rgb(record['img_center'], size=size))
                 measurements.append(steering)
