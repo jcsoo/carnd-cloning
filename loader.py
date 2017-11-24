@@ -25,8 +25,11 @@ def load_data(paths, exclude_y=None):
                 records.append(record)
     return records
 
-def load_image_rgb(path, size=None):
-    img = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2RGB)
+def load_image_rgb(path, size=None, cspace=None):
+    if cspace == 'hsv':
+        img = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2HSV)
+    else:
+        img = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2RGB)
     if size:
         cv2.resize(img, size)
     return img
@@ -65,7 +68,7 @@ def load_training_sets_all(paths, correction=0.2, size=None):
         measurements.append(steering - correction)
     return np.array(images), np.array(measurements)
 
-def training_generator(samples, batch_size=32, correction=0.2, scale_y=None, size=None, left=False, right=False):
+def training_generator(samples, batch_size=32, correction=0.2, scale_y=None, size=None, left=False, right=False, cspace=None):
     num_samples = len(samples)
     while 1:
         shuffle(samples)
@@ -78,22 +81,22 @@ def training_generator(samples, batch_size=32, correction=0.2, scale_y=None, siz
                 if scale_y:
                     steering *= scale_y
 
-                images.append(load_image_rgb(record['img_center'], size=size))
+                images.append(load_image_rgb(record['img_center'], size=size, cspace=cspace))
                 measurements.append(steering)
 
                 if left:
                     # Images from left camera have rightward correction
-                    images.append(load_image_rgb(record['img_left'], size=size))
+                    images.append(load_image_rgb(record['img_left'], size=size, cspace=cspace))
                     measurements.append(steering + correction)
 
                 if right:
                     # Images from right camera have leftward correction
-                    images.append(load_image_rgb(record['img_right'], size=size))
+                    images.append(load_image_rgb(record['img_right'], size=size, cspace=cspace))
                     measurements.append(steering - correction)            
             
             yield augment_flipped((np.array(images), np.array(measurements)))
 
-def validation_generator(samples, batch_size=32, size=None, scale_y=None):
+def validation_generator(samples, batch_size=32, size=None, scale_y=None, cspace=None):
     num_samples = len(samples)
     while 1:
         shuffle(samples)
@@ -106,7 +109,7 @@ def validation_generator(samples, batch_size=32, size=None, scale_y=None):
                 if scale_y:
                     steering *= scale_y
 
-                images.append(load_image_rgb(record['img_center'], size=size))
+                images.append(load_image_rgb(record['img_center'], size=size, cspace=cspace))
                 measurements.append(steering)
                 
             yield np.array(images), np.array(measurements)
