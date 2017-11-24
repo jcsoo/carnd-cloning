@@ -23,8 +23,11 @@ def load_data(paths):
                 records.append(record)
     return records
 
-def load_image_rgb(path):
-    return cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2RGB)
+def load_image_rgb(path, size=None):
+    img = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2RGB)
+    if size:
+        cv2.resize(img, size)
+    return img
 
 def load_training_set(path):
     return load_training_sets([path])
@@ -37,10 +40,10 @@ def load_training_sets(paths):
         measurements.append(record['steering'])
     return np.array(images), np.array(measurements)
 
-def load_training_set_all(path, correction=0.2):
-    return load_training_sets_all([path], correction=correction)
+def load_training_set_all(path, correction=0.2, size=None):
+    return load_training_sets_all([path], correction=correction, size=size)
 
-def load_training_sets_all(paths, correction=0.2):    
+def load_training_sets_all(paths, correction=0.2, size=None):    
     images = []
     measurements = []
     records = load_data(paths)
@@ -48,19 +51,19 @@ def load_training_sets_all(paths, correction=0.2):
     for record in records:
         steering = record['steering']
         
-        images.append(load_image_rgb(record['img_center']))
+        images.append(load_image_rgb(record['img_center'], size=size))
         measurements.append(steering)
 
         # Images from left camera have rightward correction
-        images.append(load_image_rgb(record['img_left']))
+        images.append(load_image_rgb(record['img_left'], size=size))
         measurements.append(steering + correction)
 
         # Images from right camera have leftward correction
-        images.append(load_image_rgb(record['img_right']))
+        images.append(load_image_rgb(record['img_right'], size=size))
         measurements.append(steering - correction)
     return np.array(images), np.array(measurements)
 
-def training_generator(samples, batch_size=32, correction=0.2, left=False, right=False):
+def training_generator(samples, batch_size=32, correction=0.2, size=None, left=False, right=False):
     num_samples = len(samples)
     while 1:
         shuffle(samples)
@@ -71,22 +74,22 @@ def training_generator(samples, batch_size=32, correction=0.2, left=False, right
             for record in batch_samples:
                 steering = record['steering']
 
-                images.append(load_image_rgb(record['img_center']))
+                images.append(load_image_rgb(record['img_center'], size=size))
                 measurements.append(steering)
 
                 if left:
                     # Images from left camera have rightward correction
-                    images.append(load_image_rgb(record['img_left']))
+                    images.append(load_image_rgb(record['img_left'], size=size))
                     measurements.append(steering + correction)
 
                 if right:
                     # Images from right camera have leftward correction
-                    images.append(load_image_rgb(record['img_right']))
+                    images.append(load_image_rgb(record['img_right'], size=size))
                     measurements.append(steering - correction)            
             
             yield augment_flipped((np.array(images), np.array(measurements)))
 
-def validation_generator(samples, batch_size=32):
+def validation_generator(samples, batch_size=32, size=None):
     num_samples = len(samples)
     while 1:
         shuffle(samples)
@@ -97,7 +100,7 @@ def validation_generator(samples, batch_size=32):
             for record in batch_samples:
                 steering = record['steering']
 
-                images.append(load_image_rgb(record['img_center']))
+                images.append(load_image_rgb(record['img_center'], size=size))
                 measurements.append(steering)
                 
             yield np.array(images), np.array(measurements)

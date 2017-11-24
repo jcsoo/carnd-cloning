@@ -1,6 +1,3 @@
-
-# Model 11 - Use generators for data supply
-
 import sys
 import loader
 from sklearn.model_selection import train_test_split
@@ -29,7 +26,7 @@ def build_model():
     return model
 
 
-SIZE = (360 / 2, 160 / 2)
+SIZE = (160, 80)
 
 def main(args):
     model = build_model()
@@ -39,15 +36,15 @@ def main(args):
 
     print('train_samples:', len(train_samples), 'validation_samples:', len(validation_samples))
     
-    tg = loader.training_generator(train_samples, batch_size=32, correction=0.25, resize=SIZE)
-    vg = loader.validation_generator(validation_samples, batch_size=32, resize=SIZE)
+    tg = loader.training_generator(train_samples, batch_size=32, correction=0.25, size=SIZE)
+    vg = loader.validation_generator(validation_samples, batch_size=32, size=SIZE)
     
     model.fit_generator(tg,
                         samples_per_epoch=len(train_samples) * 2,
                         validation_data=vg,
                         nb_val_samples=len(validation_samples),
                         nb_epoch=3)
-    model.save('model12.h5')
+    model.save('model13.h5')
 
 
 if __name__=='__main__':
