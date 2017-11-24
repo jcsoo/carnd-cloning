@@ -60,7 +60,7 @@ def load_training_sets_all(paths, correction=0.2):
         measurements.append(steering - correction)
     return np.array(images), np.array(measurements)
 
-def training_generator(samples, batch_size=32, correction=0.2):
+def training_generator(samples, batch_size=32, correction=0.2, left=False, right=False):
     num_samples = len(samples)
     while 1:
         shuffle(samples)
@@ -74,13 +74,15 @@ def training_generator(samples, batch_size=32, correction=0.2):
                 images.append(load_image_rgb(record['img_center']))
                 measurements.append(steering)
 
-                # Images from left camera have rightward correction
-                images.append(load_image_rgb(record['img_left']))
-                measurements.append(steering + correction)
+                if left:
+                    # Images from left camera have rightward correction
+                    images.append(load_image_rgb(record['img_left']))
+                    measurements.append(steering + correction)
 
-                # Images from right camera have leftward correction
-                images.append(load_image_rgb(record['img_right']))
-                measurements.append(steering - correction)            
+                if right:
+                    # Images from right camera have leftward correction
+                    images.append(load_image_rgb(record['img_right']))
+                    measurements.append(steering - correction)            
             
             yield augment_flipped((np.array(images), np.array(measurements)))
 
