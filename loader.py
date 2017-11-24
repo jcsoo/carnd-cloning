@@ -20,7 +20,7 @@ def load_data(paths, exclude_y=None):
                     'brake' : float(line[5]),
                     'speed' : float(line[6]),
                 }
-                if exclude_y and abs(record['steering']) > exclude_y:
+                if exclude_y and abs(record['steering']) < exclude_y:
                     continue
                 records.append(record)
     return records
