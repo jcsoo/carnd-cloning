@@ -6,6 +6,7 @@ from keras.models import Sequential
 from keras.layers import Flatten, Dense, Lambda
 from keras.layers import Convolution2D, MaxPooling2D
 from keras.layers import Cropping2D
+from keras.preprocessing.image import ImageDataGenerator
 
 def normalize(x):
     import tensorflow as tf
@@ -14,8 +15,8 @@ def normalize(x):
 def build_model():
     model = Sequential()
     model.add(Cropping2D(cropping=((50,20), (0,0)), input_shape=(160, 320, 3)))
-    model.add(Lambda(lambda x: (x / 255.0) - 0.5))
-    model.add(Lambda(normalize))
+    #model.add(Lambda(lambda x: (x / 255.0) - 0.5))
+    #model.add(Lambda(normalize))
     
     model.add(Convolution2D(24, 5, 5, subsample=(2,2), activation='relu'))
     model.add(Convolution2D(36, 5, 5, subsample=(2,2), activation='relu'))
@@ -33,6 +34,7 @@ def build_model():
 
 SCALE_Y = None
 SIZE = (160, 80)
+CSPACE = None
 
 def main(args):
     model = build_model()
@@ -42,8 +44,8 @@ def main(args):
 
     print('train_samples:', len(train_samples), 'validation_samples:', len(validation_samples))
     
-    tg = loader.training_generator(train_samples, batch_size=32, scale_y=SCALE_Y, cspace='hsv', size=SIZE)
-    vg = loader.validation_generator(validation_samples, batch_size=32, scale_y=SCALE_Y, cspace='hsv', size=SIZE)
+    tg = loader.training_generator2(train_samples, batch_size=32, scale_y=SCALE_Y, cspace=CSPACE, size=SIZE)
+    vg = loader.validation_generator(validation_samples, batch_size=32, scale_y=SCALE_Y, cspace=CSPACE, size=SIZE)
     
     model.fit_generator(tg,
                         samples_per_epoch=len(train_samples) * 2,

@@ -32,6 +32,7 @@ def load_image_rgb(path, size=None, cspace=None):
         img = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2RGB)
     if size:
         cv2.resize(img, size)
+    img = (img / 255.0) - 0.5
     return img
 
 def load_training_set(path):
@@ -99,16 +100,18 @@ def training_generator(samples, batch_size=32, correction=0.2, scale_y=None, siz
 def training_generator2(samples, batch_size=32, correction=0.2, scale_y=None, size=None, left=False, right=False, cspace=None):
     images = []
     measurements = []
-    for record in batch_samples:
+    for record in samples:
         steering = record['steering']
         if scale_y:
             steering *= scale_y            
         images.append(load_image_rgb(record['img_center'], size=size, cspace=cspace))
         measurements.append(steering)
-
-    idg = ImageDataGenerator(horizontal_flip=True)
-    
+    images, measurements = np.array(images), np.array(measurements)
+    idg = ImageDataGenerator()
     return idg.flow(images, measurements)
+
+    #for (x,y) in idg.flow(images, measurements):
+    #    yield x, y
             
 def validation_generator(samples, batch_size=32, size=None, scale_y=None, cspace=None):
     num_samples = len(samples)
