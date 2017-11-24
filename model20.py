@@ -1,24 +1,19 @@
 import sys
 import loader
+import numpy as np
+import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from keras.models import Sequential
 from keras.layers import Flatten, Dense, Lambda
 from keras.layers import Convolution2D, MaxPooling2D
 from keras.layers import Cropping2D
 
-def normalize_h(x):
-    h = x[:,:,:,0]
-    s = x[:,:,:,1]
-    v = x[:,:,:,2]
-
-    v = (v - np.mean(v)) * / np.std(v)    
-    return np.stack((h, s, v), axis=3)
 
 def build_model():
     model = Sequential()
     model.add(Cropping2D(cropping=((50,20), (0,0)), input_shape=(160, 320, 3)))
     model.add(Lambda(lambda x: (x / 255.0) - 0.5))
-    model.add(Lambda(normalize_h)
+    model.add(Lambda(lambda x: tf.nn.l2_normalize(x, 2)))
     
     model.add(Convolution2D(24, 5, 5, subsample=(2,2), activation='relu'))
     model.add(Convolution2D(36, 5, 5, subsample=(2,2), activation='relu'))
@@ -53,7 +48,7 @@ def main(args):
                         validation_data=vg,
                         nb_val_samples=len(validation_samples),
                         nb_epoch=3)
-    model.save('model19.h5')
+    model.save('model20.h5')
 
 if __name__=='__main__':
     main(sys.argv[1:])
