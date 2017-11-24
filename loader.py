@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 from sklearn.utils import shuffle
 
-def load_data(paths):
+def load_data(paths, exclude_y=None):
     records = []    
     for path in paths:
         print('load_data:', path)
@@ -20,6 +20,8 @@ def load_data(paths):
                     'brake' : float(line[5]),
                     'speed' : float(line[6]),
                 }
+                if exclude_y and abs(record['steering']) > exclude_y:
+                    continue
                 records.append(record)
     return records
 
