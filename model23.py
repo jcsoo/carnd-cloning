@@ -34,7 +34,7 @@ def build_model():
 
 SCALE_Y = None
 SIZE = (160, 80)
-CSPACE = None
+CSPACE = 'hsv'
 
 def main(args):
     model = build_model()
