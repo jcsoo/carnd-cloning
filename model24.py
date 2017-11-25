@@ -53,7 +53,7 @@ def main(args):
                         validation_data=vg,
                         nb_val_samples=len(validation_samples),
                         nb_epoch=4)
-    model.save('model23a.h5')
+    model.save('model24.h5')
 
 if __name__=='__main__':
     main(sys.argv[1:])
