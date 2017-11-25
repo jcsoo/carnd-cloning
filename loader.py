@@ -32,7 +32,6 @@ def load_image_rgb(path, size=None, cspace=None):
         img = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2RGB)
     if size:
         cv2.resize(img, size)
-    img = (img / 255.0) - 0.5
     return img
 
 def load_training_set(path):
