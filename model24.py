@@ -33,7 +33,7 @@ def build_model():
     return model
 
 SCALE_Y = None
-EXCLUDE_Y = 0.01
+EXCLUDE_Y = None
 SIZE = (160, 80)
 CSPACE = 'hsv'
 
@@ -53,7 +53,7 @@ def main(args):
                         validation_data=vg,
                         nb_val_samples=len(validation_samples),
                         nb_epoch=8)
-    model.save('model24a.h5')
+    model.save('model24b.h5')
 
 if __name__=='__main__':
     main(sys.argv[1:])
