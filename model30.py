@@ -19,8 +19,8 @@ def build_model():
     model.add(Convolution2D(24, 5, 5, subsample=(2,2), activation='relu'))
     model.add(Convolution2D(36, 5, 5, subsample=(2,2), activation='relu'))
     model.add(Convolution2D(48, 5, 5, subsample=(2,2), activation='relu'))
-    model.add(Convolution2D(64, 3, 3, activation='relu'))
-    model.add(Convolution2D(64, 3, 3, activation='relu'))
+    model.add(Convolution2D(64, 3, 3, subsample=(2,2), activation='relu'))
+    model.add(Convolution2D(64, 3, 3, subsample=(2,2), activation='relu'))
     model.add(Flatten())
     model.add(Dense(100))
     model.add(Dense(50))
@@ -33,7 +33,7 @@ def build_model():
 SCALE_Y = 1.01
 EXCLUDE_Y = 0.01
 SIZE = (320, 160)
-CSPACE = 'yuv'
+CSPACE = 'hsv'
 
 def main(args):
     model = build_model()
