@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 from keras.models import Sequential
 from keras.layers import Flatten, Dense, Lambda, Dropout
 from keras.layers import Convolution2D, MaxPooling2D
-from keras.layers import Cropping2D
+from keras.layers import Cropping2D, ELU
 from keras.preprocessing.image import ImageDataGenerator
 
 def normalize(x):
@@ -16,16 +16,24 @@ def build_model():
     model = Sequential()
     model.add(Cropping2D(cropping=((50, 20), (0,0)), input_shape=(160, 320, 3)))
     model.add(Lambda(lambda x: (x / 255.0) - 0.5))
-    model.add(Convolution2D(24, 5, 5, subsample=(2,2), activation='elu'))
-    model.add(Convolution2D(36, 5, 5, subsample=(2,2), activation='elu'))
-    model.add(Convolution2D(48, 5, 5, subsample=(2,2), activation='elu'))
-    model.add(Convolution2D(64, 3, 3, subsample=(2,2), activation='elu'))
-    model.add(Convolution2D(64, 3, 3, subsample=(2,2), activation='elu'))
+    model.add(Convolution2D(24, 5, 5, subsample=(2,2)))
+    model.add(ELU())
+    model.add(Convolution2D(36, 5, 5, subsample=(2,2)))
+    model.add(ELU())
+    model.add(Convolution2D(48, 5, 5, subsample=(2,2)))
+    model.add(ELU())
+    model.add(Convolution2D(64, 3, 3, subsample=(2,2)))
+    model.add(ELU())
+    model.add(Convolution2D(64, 3, 3, subsample=(2,2)))
+    model.add(ELU())
     model.add(Flatten())
-    model.add(Dense(100, activation='elu'))
-    model.add(Dense(50, activation='elu'))
-    model.add(Dense(10, activation='elu'))
-    model.add(Dense(1, activation='elu'))
+    model.add(Dense(100))
+    model.add(ELU())
+    model.add(Dense(50))
+    model.add(ELU())
+    model.add(Dense(10))
+    model.add(ELU())
+    model.add(Dense(1))
 
     model.compile(loss='mse', optimizer='adam')
     return model
