@@ -14,12 +14,13 @@ def normalize(x):
 
 def build_model():
     model = Sequential()
-    model.add(Lambda(lambda x: (x / 255.0) - 0.5, input_shape=(66, 200, 3)))
-    model.add(Convolution2D(24, 5, 5, subsample=(2,2), activation='elu'))
-    model.add(Convolution2D(36, 5, 5, subsample=(2,2), activation='elu'))
-    model.add(Convolution2D(48, 5, 5, subsample=(2,2), activation='elu'))
-    model.add(Convolution2D(64, 3, 3, activation='elu'))
-    model.add(Convolution2D(64, 3, 3, activation='elu'))
+    model.add(Cropping2D(cropping=((50,20), (0,0)), input_shape=(160, 320, 3)))
+    model.add(Lambda(lambda x: (x / 255.0) - 0.5))
+    model.add(Convolution2D(24, 5, 5, subsample=(2,2), activation='relu'))
+    model.add(Convolution2D(36, 5, 5, subsample=(2,2), activation='relu'))
+    model.add(Convolution2D(48, 5, 5, subsample=(2,2), activation='relu'))
+    model.add(Convolution2D(64, 3, 3, activation='relu'))
+    model.add(Convolution2D(64, 3, 3, activation='relu'))
     model.add(Flatten())
     model.add(Dense(100))
     model.add(Dense(50))
@@ -31,7 +32,7 @@ def build_model():
 
 SCALE_Y = 1.01
 EXCLUDE_Y = 0.01
-SIZE = (200, 66)
+SIZE = (320, 160)
 CSPACE = 'yuv'
 
 def main(args):

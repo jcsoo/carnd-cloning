@@ -32,7 +32,6 @@ def load_image_rgb(path, size=None, cspace=None):
         img = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2YUV)
     else:
         img = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2RGB)
-    img = img[50:140,:,:]
     if size:
         img = cv2.resize(img, size, interpolation=cv2.INTER_AREA)
     return img
