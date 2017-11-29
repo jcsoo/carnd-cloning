@@ -28,6 +28,8 @@ def load_data(paths, exclude_y=None):
 def load_image_rgb(path, size=None, cspace=None):
     if cspace == 'hsv':
         img = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2HSV)
+    elif cspace == 'yuv':
+        img = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2YUV)
     else:
         img = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2RGB)
     if size:
