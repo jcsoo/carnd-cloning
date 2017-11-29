@@ -31,7 +31,7 @@ def build_model():
     model.compile(loss='mse', optimizer='adam')
     return model
 
-SCALE_Y = 1.05
+SCALE_Y = 1.01
 EXCLUDE_Y = 0.01
 SIZE = (320, 160)
 CSPACE = 'yuv'
@@ -52,7 +52,7 @@ def main(args):
                         validation_data=vg,
                         nb_val_samples=len(validation_samples),
                         nb_epoch=4)
-    model.save('model36b.h5')
+    model.save('model37.h5')
 
 if __name__=='__main__':
     main(sys.argv[1:])
