@@ -32,9 +32,22 @@ def load_image_rgb(path, size=None, cspace=None):
         img = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2YUV)
     else:
         img = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2RGB)
+    img = img[50:140,:,:]
     if size:
-        cv2.resize(img, size)
+        img = cv2.resize(img, size, interpolation=cv2.INTER_AREA)
     return img
+
+def load_image_rgb_orig(path, size=None, cspace=None):
+    if cspace == 'hsv':
+        img = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2HSV)
+    elif cspace == 'yuv':
+        img = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2YUV)
+    else:
+        img = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2RGB)
+    if size:
+        img = cv2.resize(img, size)
+    return img
+
 
 def load_training_set(path):
     return load_training_sets([path])
