@@ -18,8 +18,8 @@ def build_model():
     model.add(Convolution2D(24, 5, 5, subsample=(2,2), activation='relu'))
     model.add(Convolution2D(36, 5, 5, subsample=(2,2), activation='relu'))
     model.add(Convolution2D(48, 5, 5, subsample=(2,2), activation='relu'))
-    model.add(Convolution2D(64, 3, 3, subsample=(2,2), activation='relu'))
-    model.add(Convolution2D(64, 3, 3, subsample=(2,2), activation='relu'))
+    model.add(Convolution2D(64, 3, 3, activation='relu'))
+    model.add(Convolution2D(64, 3, 3, activation='relu'))
     model.add(Flatten())
     model.add(Dense(100))
     model.add(Dense(50))
@@ -50,7 +50,7 @@ def main(args):
                         validation_data=vg,
                         nb_val_samples=len(validation_samples),
                         nb_epoch=4)
-    model.save('model27.h5')
+    model.save('model28.h5')
 
 if __name__=='__main__':
     main(sys.argv[1:])
