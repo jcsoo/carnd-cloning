@@ -55,7 +55,7 @@ def main(args):
                         samples_per_epoch=len(train_samples) * 2,
                         validation_data=vg,
                         nb_val_samples=len(validation_samples),
-                        nb_epoch=4)
+                        nb_epoch=8)
     model.save('model27.h5')
 
 if __name__=='__main__':
