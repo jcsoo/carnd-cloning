@@ -192,6 +192,6 @@ to show worse performance than expected.
 
 The final model chosen performed reasonably well on both track 1 and track 2.
 
-Run 1 on Track 1: [run1.mp4](Run 1 Video)
+Run 1 on Track 1: [Run 1 Video](./run1.mp4)
 
-Run 2 on Track 2: [run2.mp4](Run 2 Video)
+Run 2 on Track 2: [Run 2 Video](./run2.mp4)
