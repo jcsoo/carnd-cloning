@@ -1,0 +1,518 @@
+Driving1 - 2270
+Driving2 - 1483
+
+3753
+
+Model2 - LeNet
+Epoch 5/5
+1816/1816 [==============================] - 6s - loss: 0.0080 - val_loss: 0.0066
+
+Model3 - Augment via HFlip
+Epoch 5/5
+3632/3632 [==============================] - 13s - loss: 0.0096 - val_loss: 0.0031
+
+Model4 - Add Left + Right Cameras
+# Hugs right side
+Epoch 5/5
+10896/10896 [==============================] - 39s - loss: 0.0071 - val_loss: 0.0088
+
+Model5 - Crop Top 50 / Bottom 20
+# Undercorrects on left side
+# Good recovery correction on right side
+# Good centering on bridge
+# Turns to left too strongly after bridge
+Epoch 5/5
+3632/3632 [==============================] - 8s - loss: 0.0099 - val_loss: 0.0041
+
+Model6 - Implement NVIDIA Model
+# Good center holding
+# Floats to outside of left turn
+# Good centering on bridge
+# Almost makes it past parking area
+Epoch 3/3
+3632/3632 [==============================] - 8s - loss: 0.0059 - val_loss: 0.0046
+
+Model7 - Multiple Data Sets - driving1 and driving2
+# Navigates past parking lot
+# Under-recovers on curve past lot
+Epoch 3/3
+6004/6004 [==============================] - 16s - loss: 0.0049 - val_loss: 0.0110
+
+Model7 - Multiple Data Sets - driving1 through driving4
+# Loss is about 10x previous version
+# Still doesn't improve much after 3 epochs
+# Drives off first corner outside
+Epoch 3/3
+14582/14582 [==============================] - 38s - loss: 0.0425 - val_loss: 0.1184
+
+Model8 - Add Back Left / Right Camera Augmentation - 0.2
+# Good lane holding during initial left turn
+# Very good left turn past parking lot
+# Minimal overcorrection
+# Barely makes right turn after parking lot - try higher correction factor?
+# Completed lap!
+Epoch 3/3
+18014/18014 [==============================] - 48s - loss: 0.0083 - val_loss: 0.0411
+
+Model9 - Boost correction factor to 0.3
+# Slightly more jittery - more left and right swings
+# Very strong centering
+# Holds center of road through curve after parking lot - maybe reduce correction factor slightly
+# Fails on track 2
+Epoch 3/3
+18014/18014 [==============================] - 47s - loss: 0.0131 - val_loss: 0.0742
+
+Model10 - Reduce correction factor to 0.25
+# Much less jittery
+Epoch 3/3
+18014/18014 [==============================] - 45s - loss: 0.0116 - val_loss: 0.0601
+
+Model11 - Reimplement with generators
+Epoch 3/3
+18012/18012 [==============================] - 47s - loss: 0.0150 - val_loss: 0.0162
+
+Model11 - Fix validation generator
+Epoch 3/3
+18012/18012 [==============================] - 42s - loss: 0.0151 - val_loss: 0.0094
+
+Model11 - Add udacity training set
+# Completes full lap
+# Moderate hunting
+Epoch 3/3
+56586/56586 [==============================] - 130s - loss: 0.0162 - val_loss: 0.0165
+
+
+# TODO
+# - filter records with small steerig angles
+# - Add recovery recording on right / left side of track
+# - More complex correction factor - based on existing steering angle?
+# - More image augmentation - noise / distortion? 
+# - Test in different color space?
+
+
+Driving 2
+—
+
+54.211.139.95
+
+TODO
+ + Retest center camera only
+ + Resize image 50%
+ + Filter to exclude near-zero steering angle
+ + Add steering angle multiplier
+ - Convert to HSV colorspace
+ - Normalize V colorspace
+
+Data
+ - Manually clean up recordings
+ - Selectively record additional turns
+ - Record recovery segments
+ - Record track two hard curves, slower
+
+Network
+ - Add Dropout
+ - Tweak weights
+
+Model12 - Center Camera Only, d0,d1,d2
+# Smooth, slightly wide on right turn after parking lot
+—
+Epoch 3/3
+18862/18862 [==============================] - 39s - loss: 0.0079 - val_loss: 0.0085
+
+Model13 - Scale images from 320x160 to 160x80 
+# Understeers first corner
+Epoch 3/3
+18862/18862 [==============================] - 41s - loss: 0.0082 - val_loss: 0.0073
+
+Model 14 - Scale y by 1.1
+# Clean drive around track, slightly wide on turns
+# Works fine in reverse direction
+Epoch 3/3
+18862/18862 [==============================] - 41s - loss: 0.0098 - val_loss: 0.0101
+
+Model 15 - Exclude abs(y) < 0.1
+# train_samples: 7131 validation_samples: 1783
+# Doesn’t tend to center, runs off outside of track
+# ** bug - was only including abs(y) < 0.1
+Epoch 3/3
+14262/14262 [==============================] - 31s - loss: 8.1989e-04 - val_loss: 7.6554e-04
+
+Model 16 - Exclude abs(y) < 0.1
+# doesn’t like to hold center
+# crashes into bridge post
+# hugs inside of left turn
+# understeers to outside of right turn
+Epoch 3/3
+4600/4600 [==============================] - 10s - loss: 0.0198 - val_loss: 0.0234
+
+Model 17 - Exclude abs(y) < 0.05
+# Pretty good overall, floats to outside of final left turn
+Epoch 3/3
+7204/7204 [==============================] - 15s - loss: 0.0157 - val_loss: 0.0163
+
+Model 18 - Convert to HSV
+# Very good job around corners
+Epoch 3/3
+7204/7204 [==============================] - 15s - loss: 0.0162 - val_loss: 0.0156
+
+Model 19 - Remove Y correction factor
+# Very good performance, slight understeer
+Epoch 3/3
+7204/7204 [==============================] - 15s - loss: 0.0134 - val_loss: 0.0138
+
+Model 20 - Normalize brightness (V) within sample
+# Slight understeer
+# Crashes into parking lot barrier
+Epoch 3/3
+7204/7204 [==============================] - 16s - loss: 0.0134 - val_loss: 0.0135
+
+Model 21 - Use Keras ImageGenerator, no normalization
+# Very good (similar to 19) - wasn’t using ImageGenerator
+Epoch 3/3
+7204/7204 [==============================] - 16s - loss: 0.0136 - val_loss: 0.0141
+
+Model 22 - Fixed Keras ImageGenerator
+Epoch 3/3
+7204/7204 [==============================] - 68s - loss: 0.0394 - val_loss: 0.0389
+
+Model 23 - Revert back to Model 20
+# Understeers first corner
+Epoch 3/3
+7204/7204 [==============================] - 15s - loss: 0.0128 - val_loss: 0.0128
+
+Model 23 (HSV)
+# Good performance
+Epoch 3/3
+7204/7204 [==============================] - 15s - loss: 0.0125 - val_loss: 0.0172
+
+Model 23 - Track 2
+# Handled about 75% of curves but missed others
+# Issues right at start
+Epoch 3/3
+5752/5752 [==============================] - 13s - loss: 0.1105 - val_loss: 0.1240
+
+Model24 - Track 2 - Reduce Y exclusion to 0.01, 4 epoch training
+Epoch 4/4
+6010/6010 [==============================] - 13s - loss: 0.0954 - val_loss: 0.1026
+
+
+Model24a - Track 2 - 8 Epochs
+Epoch 8/8
+6010/6010 [==============================] - 13s - loss: 0.0563 - val_loss: 0.0744
+
+Model24b - Track 2 - No Y exclusions
+# Needs help on start
+# Needs help on very sharp turns
+# Track 1 - Hugs left side, doesn’t recognize yellow lines
+Epoch 8/8
+8576/8576 [==============================] - 19s - loss: 0.0483 - val_loss: 0.0766
+
+Model 24c - Both Tracks - 0.01 Y Exclusion
+# Good on track 1, tends to hang to left side
+# Passes start, still falls off track to right
+Epoch 8/8
+15186/15186 [==============================] - 34s - loss: 0.0307 - val_loss: 0.0385
+
+Model 25 - Add 0.1 Dropout
+# Good on track one, hangs on left side
+# Passes start, not good on sharp turns
+Epoch 8/8
+15186/15186 [==============================] - 34s - loss: 0.0369 - val_loss: 0.0438
+
+TODO: More Training Data - Track 2 (slower)
+- Experiment with dropout
+- Different activations
+- Tweak Weights
+
+Driving 3
+
+TODO
+—
+Test with additional data
+Test with YUV instead of HSV
+Tweak image size
+Tweak dropout
+Add ELU activations
+Tweak left + right
+Additional data augmentation
+Track loss history during training
+
+Model25 - driving5, driving6, driving7
+—
+Epoch 8/8
+# Aggressive responses, some hunting
+# Doesn’t quite make it through sharpest corners
+# Can’t drive straight on track 1
+23698/23698 [==============================] - 55s - loss: 0.0350 - val_loss: 0.0498
+
+Model25b - driving5, driving6
+# Better center holding, not enough turn through corners
+Epoch 8/8
+18004/18004 [==============================] - 41s - loss: 0.0194 - val_loss: 0.0267
+
+Model26 - driving0 to driving6, YUV, epochs=3
+# Still has issues with sharp corners
+# Track 1 - hunting through turns, doesn’t make corner after bridge
+# — Fixed image scaling in player
+Epoch 4/4
+33192/33192 [==============================] - 70s - loss: 0.0324 - val_loss: 0.0324
+
+## fixup scaling and image handling
+
+Model27
+# hugs right side
+Epoch 4/4
+33192/33192 [==============================] - 33s - loss: 0.0493 - val_loss: 0.0481
+
+Model27 - 8 Epochs
+# likes to hug outside lane
+Epoch 8/8
+33192/33192 [==============================] - 36s - loss: 0.0408 - val_loss: 0.0450
+
+Model28 - Use original Model20 model without subsampling of 3x3 layers
+# Not that good
+Epoch 4/4
+33192/33192 [==============================] - 33s - loss: 0.0273 - val_loss: 0.0291
+
+Model30 - Use ELU and reduce correction factor, just track 1 
+# Bad
+Epoch 4/4
+9176/9176 [==============================] - 10s - loss: 0.0120 - val_loss: 0.0203
+
+Model30 - Back to HSV, similar to Model17
+# pretty good performance
+Epoch 4/4
+9176/9176 [==============================] - 21s - loss: 0.0116 - val_loss: 0.0127
+
+Model31 - Test YUV
+# similar to model30
+Epoch 4/4
+9176/9176 [==============================] - 20s - loss: 0.0111 - val_loss: 0.0100
+
+Model32 - 1/2 size first layer and input
+# poor performance
+Epoch 4/4
+9176/9176 [==============================] - 15s - loss: 0.0104 - val_loss: 0.0133
+
+Model33 - Model31 + ELU
+# really bad?
+Epoch 4/4
+9176/9176 [==============================] - 21s - loss: 0.0094 - val_loss: 0.0192
+
+Model34 - Model31 + tweak normalization
+# OK, wide on right turn after bridge
+Epoch 4/4
+9176/9176 [==============================] - 21s - loss: 0.0102 - val_loss: 0.0144
+
+Model34a - Use driving0, 1, 2, 5, 6
+# track 1 - some hunting but makes all corners
+# track 2 - handles turns well at 9 mph, only fails in shadow area
+Epoch 4/4
+27180/27180 [==============================] - 60s - loss: 0.0164 - val_loss: 0.0195
+
+Model35 - Remove y scaling
+# doesn’t make sharp curves
+Epoch 4/4
+27180/27180 [==============================] - 58s - loss: 0.0161 - val_loss: 0.0185
+
+Model36 - Boost y scaling to 1.05
+# Track 1 - still drifts to outside of turns, hits side of bridge
+Epoch 4/4
+27180/27180 [==============================] - 58s - loss: 0.0188 - val_loss: 0.0193
+
+Model 36a - Reduce amount of track 2 data
+Epoch 4/4
+17600/17600 [==============================] - 40s - loss: 0.0173 - val_loss: 0.0194
+
+Model 36b - Increase # of epochs
+Epoch 8/8
+27180/27180 [==============================] - 60s - loss: 0.0118 - val_loss: 0.0197
+
+Model 37 - 1.01, normalize V
+# Track 1, Falls off outside
+# Good job track 2, off track before double lane, drives into shadow
+Epoch 4/4
+27180/27180 [==============================] - 60s - loss: 0.0178 - val_loss: 0.0183
+
+Model 38 - Add 0.5 dropout after conv2d layers
+# slightly off center, no hunting
+# enters parking lot
+# track 2 good until off outside of curve
+Epoch 4/4
+27180/27180 [==============================] - 62s - loss: 0.0236 - val_loss: 0.0214
+
+Model 39 - Reduce exclusion zone
+# Track 1 - floats outside
+# Track 2 - floats outside
+Epoch 4/4
+27344/27344 [==============================] - 64s - loss: 0.0242 - val_loss: 0.0228
+
+Model 40 - Left + Right 0.2, 3 epochs, drive0,1,5,6
+# Track 1 - Good centering through curves, full lap
+# Track 2 - Floats outside sharp curves
+Epoch 3/3
+78006/78006 [==============================] - 164s - loss: 0.0327 - val_loss: 0.0237
+
+Model 40a - Add track 2 recovery
+# Track 1 - crashes into parking lot
+# Track 2 - good performance around curves - full lap
+# Track 1 reverse - full lap
+Epoch 3/3
+95124/95124 [==============================] - 201s - loss: 0.0534 - val_loss: 0.0430
+
+Model 41 - increase scale
+# Track 1 - oscillation at higher speeds
+# Track 2 - Full lap
+Epoch 3/3
+78006/78006 [==============================] - 164s - loss: 0.0329 - val_loss: 0.0245
+
+Model 41a - Model 41 + Track 2 Recovery
+# Track 1 - Slight oscillation, full lap
+# Track 2 - Full Lap
+# Track 1 @ 16 - Oscillation, full lap
+# Track 2 @ 16 - Oscillation, 
+Epoch 3/3
+95124/95124 [==============================] - 201s - loss: 0.0542 - val_loss: 0.0456
+
+Model 42 - Scale 1.02, lr=0.0001, 4 epochs
+# Track 1 @ 16 - Moderate oscillation
+# Track 2 @ 16 - Off edge
+Epoch 4/4
+78006/78006 [==============================] - 164s - loss: 0.0281 - val_loss: 0.0287
+
+Model 42a - Model 42 + Track 2 Recovery
+#
+#
+Epoch 4/4
+95124/95124 [==============================] - 198s - loss: 0.0484 - val_loss: 0.0382
+
+Model 43 - No Y scale
+# Poor performance on both tracks at speed
+Epoch 5/5
+78006/78006 [==============================] - 164s - loss: 0.0264 - val_loss: 0.0206
+
+Model 44 - Add RELU to Dense layers
+# Track 1 @ 16 overcorrection and oscillation
+# Track 1 @ 12 hits left side of bridge?
+# Track 2 - Good job, full lap
+Epoch 5/5
+78006/78006 [==============================] - 164s - loss: 0.0237 - val_loss: 0.0192
+
+Model 45 - Remove left + right
+# Track 1 - Slight oscillation - full lap
+# Track 2 - Good but understeers in corner
+Epoch 5/5
+26002/26002 [==============================] - 60s - loss: 0.0217 - val_loss: 0.0181
+
+Model 45a - Add Track 2 Recovery
+# Track 1 - Minimal hunting, slight understeer after bridge
+# Track 2 - Full lap, moderate hunting on center
+Epoch 5/5
+31708/31708 [==============================] - 74s - loss: 0.0400 - val_loss: 0.0339
+
+Model 45b - Add back Y scale 1.01
+Epoch 5/5
+31708/31708 [==============================] - 73s - loss: 0.0394 - val_loss: 0.0391
+
+Model 46 - Test with ELU activation
+Epoch 5/5
+31708/31708 [==============================] - 73s - loss: 0.0510 - val_loss: 0.0439
+
+Model47 - Remove Exclude and ELU
+Epoch 5/5
+46408/46408 [==============================] - 106s - loss: 0.0330 - val_loss: 0.0312
+
+Driving 4
+
+TODO
+   Track 1 recovery data
+   Crop by 80,30
+   Add Gaussian Blur
+
+Model 48 - Model 45a + Add track 1 recovery
+# Track 1 - Hits side of bridge
+# Track 2 - Full Lap
+Epoch 5/5
+37024/37024 [==============================] - 82s - loss: 0.0363 - val_loss: 0.0351
+
+Model 48a - Scale Y = None
+# Track 1: Full lap
+# Track 2 - Slightly wide in turns, off outside
+Epoch 5/5
+37008/37008 [==============================] - 87s - loss: 0.0348 - val_loss: 0.0331
+
+Model 49 - Increase cropping to 80/30, Scale Y = 0
+# Track 1 - Slight wandering on bridge, drives off left
+Epoch 5/5
+37024/37024 [==============================] - 73s - loss: 0.0382 - val_loss: 0.0378
+
+Model 50 - Dropout 0.1, no track 1 recovery
+# Track 1 @ 12  - Full lap, a bit unsteady
+# Track 1 @ 24 - Swerves on bridge, full lap
+# Track 2 @ 12 - Full lap, good around tight corners, some wandering
+# Track 2 @ 24 - Overcorrection
+python model50.py ../driving0/driving_log.csv ../driving1/driving_log.csv ../driving2/driving_log.csv ../driving5/driving_log.csv ../driving6/driving_log.csv ../driving7/driving_log.csv
+Epoch 1/5
+33048/33048 [==============================] - 71s - loss: 0.0908 - val_loss: 0.0536
+Epoch 2/5
+33048/33048 [==============================] - 69s - loss: 0.0599 - val_loss: 0.0437
+Epoch 3/5
+33048/33048 [==============================] - 69s - loss: 0.0489 - val_loss: 0.0389
+Epoch 4/5
+33048/33048 [==============================] - 69s - loss: 0.0410 - val_loss: 0.0385
+Epoch 5/5
+33048/33048 [==============================] - 69s - loss: 0.0360 - val_loss: 0.0347
+
+Model 51 - Add back horizontal subsampling in layers
+# Track 1 - Drifts to outside and inside
+# Track 2 - Good turns, lots of weaving, understeers off s curve
+Epoch 5/5
+33048/33048 [==============================] - 57s - loss: 0.0377 - val_loss: 0.0334
+
+Model 51a - No track 2 recovery
+# Track 1 - Understeers on left turn after bridge
+Epoch 5/5
+27344/27344 [==============================] - 47s - loss: 0.0201 - val_loss: 0.0185
+
+Model 52 - Remove 3x3 subsampling, no track 2 recovery
+# Track 1 - Good center holding, drifts outside and hits pillar
+
+Model 52a - Add back track 2 recovery and 8 epochs
+# Track 1 - Stays wide outside first curve, wide off right curve
+#
+python model52.py ../driving0/driving_log.csv ../driving1/driving_log.csv ../driving2/driving_log.csv ../driving5/driving_log.csv ../driving6/driving_log.csv ../driving7/driving_log.csv
+Epoch 1/5
+33048/33048 [==============================] - 71s - loss: 0.0921 - val_loss: 0.0559
+Epoch 2/8
+33048/33048 [==============================] - 68s - loss: 0.0588 - val_loss: 0.0446
+Epoch 3/8
+33048/33048 [==============================] - 68s - loss: 0.0490 - val_loss: 0.0383
+Epoch 4/8
+33048/33048 [==============================] - 68s - loss: 0.0418 - val_loss: 0.0358
+Epoch 5/8
+33048/33048 [==============================] - 68s - loss: 0.0358 - val_loss: 0.0353
+Epoch 6/8
+33048/33048 [==============================] - 68s - loss: 0.0315 - val_loss: 0.0339
+Epoch 7/8
+33048/33048 [==============================] - 68s - loss: 0.0280 - val_loss: 0.0331
+Epoch 8/8
+33048/33048 [==============================] - 68s - loss: 0.0248 - val_loss: 0.0335
+
+Model 53 - 5 epochs, Add back left + right augmentation, take 2/3 samples
+# Track 1 @ 24 - Some hunting, full lap
+# Track 2 @ 12 - Full Lap
+# Track 1 Record @ 9 => run1
+# Track 2 Record  @ 9 => run2
+
+
+python model53.py ../driving0/driving_log.csv ../driving1/driving_log.csv ../driving2/driving_log.csv ../driving5/driving_log.csv ../driving6/driving_log.csv ../driving7/driving_log.csv
+Epoch 1/5
+66240/66096 [==============================] - 127s - loss: 0.1040 - val_loss: 0.0623
+Epoch 2/5
+66120/66096 [==============================] - 123s - loss: 0.0678 - val_loss: 0.0478
+Epoch 3/5
+66120/66096 [==============================] - 121s - loss: 0.0563 - val_loss: 0.0437
+Epoch 4/5
+66240/66096 [==============================] - 122s - loss: 0.0504 - val_loss: 0.0437
+Epoch 5/5
+66120/66096 [==============================] - 122s - loss: 0.0450 - val_loss: 0.0387
