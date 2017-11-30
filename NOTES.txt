@@ -516,3 +516,22 @@ Epoch 4/5
 66240/66096 [==============================] - 122s - loss: 0.0504 - val_loss: 0.0437
 Epoch 5/5
 66120/66096 [==============================] - 122s - loss: 0.0450 - val_loss: 0.0387
+
+-- FINAL SELECTION - Model 50 (copied to model.py) --
+
+Model 50 - Dropout 0.1, no track 1 recovery
+# Track 1 @ 12  - Full lap, a bit unsteady
+# Track 1 @ 24 - Swerves on bridge, full lap
+# Track 2 @ 12 - Full lap, good around tight corners, some wandering
+# Track 2 @ 24 - Overcorrection
+python model50.py ../driving0/driving_log.csv ../driving1/driving_log.csv ../driving2/driving_log.csv ../driving5/driving_log.csv ../driving6/driving_log.csv ../driving7/driving_log.csv
+Epoch 1/5
+33048/33048 [==============================] - 71s - loss: 0.0908 - val_loss: 0.0536
+Epoch 2/5
+33048/33048 [==============================] - 69s - loss: 0.0599 - val_loss: 0.0437
+Epoch 3/5
+33048/33048 [==============================] - 69s - loss: 0.0489 - val_loss: 0.0389
+Epoch 4/5
+33048/33048 [==============================] - 69s - loss: 0.0410 - val_loss: 0.0385
+Epoch 5/5
+33048/33048 [==============================] - 69s - loss: 0.0360 - val_loss: 0.0347
