@@ -1,6 +1,6 @@
 # **Behavioral Cloning** 
 
-## Writeup Template
+## Writeup Report
 
 ---
 
