@@ -2,8 +2,6 @@
 
 ## Writeup Template
 
-### You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
-
 ---
 
 **Behavioral Cloning Project**
@@ -54,76 +52,82 @@ The model.py file contains the code for training and saving the convolution neur
 
 #### 1. An appropriate model architecture has been employed
 
-My model consists of a convolution neural network with 3x3 filter sizes and depths between 32 and 128 (model.py lines 18-24) 
+This model is based on the Nvidia model described in [End to End Learning for Self-Driving Cars](https://arxiv.org/abs/1604.07316). It consists of the following layers:
 
-The model includes RELU layers to introduce nonlinearity (code line 20), and the data is normalized in the model using a Keras lambda layer (code line 18). 
+Preprocessing
+
+   - The incoming image is converted to YUV color space.
+
+Cropping
+
+   - The incoming 320x160 image is cropped to remove the sky and the vehicle at the top and bottom.
+
+Normalization
+   - The incoming image is converted to a floating point value centered around the midpoint with a range of [-1..1].
+   - The V channel of the YUV image is l2 normalized.
+
+Convolutional Layers
+
+   - Three convolutional layers with 5x5 kernels of depths 24, 36, and 38, each with 2x2 subsampling and RELU activation
+   - Two convolutional layers with 3x3 kernels of depths 64, each with 2x2 subsampling and RELU activation
+
+Dropout Layer
+
+   - A single dropout layer with 50% dropout
+
+Dense Layers
+
+   - Three dense layers with weights of 100, 50, and 10 and RELU activation
+
+Output Layer
+
+   - A single output layer
 
 #### 2. Attempts to reduce overfitting in the model
 
-The model contains dropout layers in order to reduce overfitting (model.py lines 21). 
-
-The model was trained and validated on different data sets to ensure that the model was not overfitting (code line 10-16). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
+The model includes a dropout layer to reduce overfitting. Additionally, sessions from both tracks
+in both directions were used to ensure a reasonably large training set.
 
 #### 3. Model parameter tuning
 
-The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 25).
+The model uses the Adam optimizer, with the learning rate set to 0.0001.
 
 #### 4. Appropriate training data
 
-Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving, recovering from the left and right sides of the road ... 
+Training data was collected from centerline driving of both tracks in both directions, and the example dataset was also used. 
 
-For details about how I created the training data, see the next section. 
+Additionally, some variants were trained with recovery sessions, where the vehicle was aimed away from the centerline and appropriate centering input was provided.
+
+To augment the data, two approaches were taken:
+
+   - Left / Right flipping: An copy of the image was flipped horizontally and added to the data set, along with
+   a reflected steering input.
+   - Left / Right camera: The Left and Right camera images were optionally added to the data set along with
+   an adjusted factor to simulate recovery steering input of +/- 0.2.
+
+Additionally, an optional steering scaling factor was added to teach the model to use stronger steering input. The value of this parameter is discussed later.
+
+Finally, because a significant amount of samples have low steering angle compared to samples that have high
+steering angles, a parameter was added to allow excluding samples with an absolute steering angle below a
+threshold. This reduced training time and did not seem to impact model performance.
 
 ### Model Architecture and Training Strategy
 
 #### 1. Solution Design Approach
 
-The overall strategy for deriving a model architecture was to ...
+The basic design approach was to use a specific model (simpler at first, then more complex) with a standard training process, using a 80 / 20 split of training / validation samples, varying parameters and options such as the specific training sets used.
 
-My first step was to use a convolution neural network model similar to the ... I thought this model might be appropriate because ...
+After each training session, the model was downloaded to the simulator and tested, initially at low speeds and then at higher speeds if successful. Initially, only sample data from the first track was used and only
+that track was used for testing. After successful completion of the first track, models were trained with
+sample data from the second track, sometimes exclusively and eventually in combination.
 
-In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
-
-To combat the overfitting, I modified the model so that ...
-
-Then I ... 
-
-The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track... to improve the driving behavior in these cases, I ....
-
-At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
+After each iteration, parameters and configurations were modified slightly. After a few iterations, a model similar to the NVIDIA End to End model was used. Different color spaces were tested, as well as different
+image sizes and normalization methods. Each iteration was stored in the Git repository along with detailed notes about the validation performance and simulation performance.
 
 #### 2. Final Model Architecture
 
-The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes ...
-
-Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
-
-![alt text][image1]
+Please see the discussion in section 1.
 
 #### 3. Creation of the Training Set & Training Process
 
-To capture good driving behavior, I first recorded two laps on track one using center lane driving. Here is an example image of center lane driving:
-
-![alt text][image2]
-
-I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to .... These images show what a recovery looks like starting from ... :
-
-![alt text][image3]
-![alt text][image4]
-![alt text][image5]
-
-Then I repeated this process on track two in order to get more data points.
-
-To augment the data sat, I also flipped images and angles thinking that this would ... For example, here is an image that has then been flipped:
-
-![alt text][image6]
-![alt text][image7]
-
-Etc ....
-
-After the collection process, I had X number of data points. I then preprocessed this data by ...
-
-
-I finally randomly shuffled the data set and put Y% of the data into a validation set. 
-
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
+Please see the discussion in section 4, "Appropriate training data".
