@@ -3,6 +3,9 @@ import cv2
 import numpy as np
 from sklearn.utils import shuffle
 from keras.preprocessing.image import ImageDataGenerator
+
+# Reads and parses CSV file, adjusting image paths and optionally excluding
+# records with a abs(steering) < exclude_y
 def load_data(paths, exclude_y=None):
     records = []    
     for path in paths:
@@ -25,6 +28,7 @@ def load_data(paths, exclude_y=None):
                 records.append(record)
     return records
 
+# Loads an image from a path, optionally converting colorspace and resizing.
 def load_image_rgb(path, size=None, cspace=None):
     if cspace == 'hsv':
         img = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2HSV)
@@ -36,21 +40,13 @@ def load_image_rgb(path, size=None, cspace=None):
         img = cv2.resize(img, size, interpolation=cv2.INTER_AREA)
     return img
 
-def load_image_rgb_orig(path, size=None, cspace=None):
-    if cspace == 'hsv':
-        img = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2HSV)
-    elif cspace == 'yuv':
-        img = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2YUV)
-    else:
-        img = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2RGB)
-    if size:
-        img = cv2.resize(img, size)
-    return img
-
-
+# Load a single training sets, returning an NP array of
+# images and steering angles.
 def load_training_set(path):
     return load_training_sets([path])
 
+# Load a list of training sets, returning an NP array of
+# images and steering angles.
 def load_training_sets(paths):    
     images = []
     measurements = []
@@ -59,6 +55,9 @@ def load_training_sets(paths):
         measurements.append(record['steering'])
     return np.array(images), np.array(measurements)
 
+# Load a training set including left + right camera angles.
+# Optionally, resize images and add / subtract a steering angle correction
+# for the left + right steering images.
 def load_training_set_all(path, correction=0.2, size=None):
     return load_training_sets_all([path], correction=correction, size=size)
 
@@ -82,6 +81,15 @@ def load_training_sets_all(paths, correction=0.2, size=None):
         measurements.append(steering - correction)
     return np.array(images), np.array(measurements)
 
+# Returns a generator that yields batches of images and target values. Optionally performs the following
+# transformations:
+#
+#  scale_y - multiply all steering angles by a constant factor
+#  correction, left, right - include left and right camera images with associated correction factor
+#  size - resize the output images to `size`
+#  cspace - change the output color space to 'yuv' or 'hsv'
+#
+#  NOTE: All output images and targets are automatically augmented by their horizontally flipped values.
 def training_generator(samples, batch_size=32, correction=0.2, scale_y=None, size=None, left=False, right=False, cspace=None):
     num_samples = len(samples)
     while 1:
@@ -110,6 +118,7 @@ def training_generator(samples, batch_size=32, correction=0.2, scale_y=None, siz
             
             yield augment_flipped((np.array(images), np.array(measurements)))
 
+# Experiment with Keras ImageDataGenerator
 def training_generator2(samples, batch_size=32, correction=0.2, scale_y=None, size=None, left=False, right=False, cspace=None):
     images = []
     measurements = []
@@ -126,6 +135,14 @@ def training_generator2(samples, batch_size=32, correction=0.2, scale_y=None, si
     #for (x,y) in idg.flow(images, measurements):
     #    yield x, y
             
+# Returns a generator that yields batches of images and target values. Optionally performs the following
+# transformations: 
+#
+#  scale_y - multiply all steering angles by a constant factor
+#  size - resize the output images to `size`
+#  cspace - change the output color space to 'yuv' or 'hsv'
+#
+# The transformations used by this generator should match those used by the training generator.
 def validation_generator(samples, batch_size=32, size=None, scale_y=None, cspace=None):
     num_samples = len(samples)
     while 1:
@@ -145,12 +162,13 @@ def validation_generator(samples, batch_size=32, size=None, scale_y=None, cspace
             yield np.array(images), np.array(measurements)
             
 
-
+# Flip an image and target horizontally.
 def augment_flipped(ts):
     (X_train, y_train) = ts
     (X_flipped, y_flipped) = (np.fliplr(X_train), -y_train)
     return np.concatenate((X_train, X_flipped)), np.concatenate((y_train, y_flipped))
 
+# Test load_training_set
 def main(args):
     data_path = args[0]
     X_train, y_train = load_training_set(data_path)
